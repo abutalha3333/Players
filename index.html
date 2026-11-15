@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>টিম পোস্টার মেকার</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box}
@@ -14,25 +14,24 @@ body{margin:0;background:#0b1020;font-family:'Hind Siliguri',sans-serif;color:#f
 .bar button.g{background:#2a3566;color:#fff}
 .hint{text-align:center;font-size:13px;color:#9fb0e8;padding:6px 10px}
 #wrap{margin:0 auto;overflow:hidden}
-#stage{width:1080px;transform-origin:top left;padding:50px 40px 40px;text-align:center;
- background:radial-gradient(circle at 20% 10%,#1a2a6c 0,#0a1038 45%,#050a24 100%);font-family:'Hind Siliguri',sans-serif}
+#stage{position:relative;overflow:hidden;width:1080px;transform-origin:top left;padding:50px 40px 40px;text-align:center;
+ background:var(--bg1);font-family:'Hind Siliguri',sans-serif}
 [contenteditable]{outline:none;cursor:text}
 [contenteditable]:hover{background:rgba(255,255,255,.08)}
 .exp [contenteditable]:hover{background:none}
 .club{font-size:76px;font-weight:700;color:#ffd21f;line-height:1.2;text-shadow:0 0 18px rgba(255,210,31,.35)}
 .by{font-size:42px;font-weight:600;line-height:1.3}
 .pill{margin:14px auto;border:6px solid #ffc933;border-radius:50px}
-.t1{background:#a00016;width:94%;font-size:74px;font-weight:700;padding:0 20px;line-height:1.5}
-.tag{font-size:40px;font-weight:600;color:#d7ffb8;margin:18px 0 4px}
-.t2{background:#2a0508;width:86%;font-size:84px;font-weight:700;color:#ffd21f;padding:0 20px;line-height:1.5}
+.t1{background:#2a0508;width:88%;font-size:56px;font-weight:700;color:#ffd21f;padding:0 20px;line-height:1.5}
+.t2{background:#a00016;width:94%;font-size:76px;font-weight:700;color:#fff;padding:0 20px;line-height:1.5}
 .mgr{font-size:46px;font-weight:600;margin:14px 0 26px}
 .mgr b{color:#ffd21f;margin-left:10px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
-.card{border:5px solid #ffc933;border-radius:22px;padding:8px;background:rgba(255,201,51,.12)}
-.ph{position:relative;height:400px;border-radius:10px;overflow:hidden;background:#16245c center/cover no-repeat;border:3px solid #ffc933;
+.grid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
+.card{width:calc((100% - 54px)/4);border:4px solid #ffc933;border-radius:18px;padding:6px;background:rgba(255,201,51,.12)}
+.ph{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#16245c center/cover no-repeat;border:3px solid #ffc933;
  display:flex;align-items:center;justify-content:center;font-size:30px;color:#9fb0e8;cursor:pointer}
-.nm{margin-top:8px;background:#0b1670;border:3px solid #ffc933;border-radius:12px;font-size:42px;font-weight:700;padding:4px 6px;line-height:1.4}
-.foot{margin-top:30px;font-size:44px;font-weight:700;color:#ffd21f}
+.nm{margin-top:8px;background:#0b1670;border:3px solid #ffc933;border-radius:12px;font-size:30px;font-weight:700;padding:2px 4px;line-height:1.4;white-space:nowrap;overflow:hidden}
+.foot{margin-top:30px;font-size:30px;font-weight:400;letter-spacing:3px;color:#ffd21f;opacity:.9}
 .modal{display:none;position:fixed;inset:0;z-index:20;background:rgba(5,8,25,.96);overflow:auto;padding:14px;text-align:center}
 .modal.on{display:block}
 .modal select,.modal button{font:600 15px 'Hind Siliguri',sans-serif;padding:9px 12px;border-radius:10px;border:0;margin:4px}
@@ -42,7 +41,7 @@ body{margin:0;background:#0b1020;font-family:'Hind Siliguri',sans-serif;color:#f
 .live input{width:100%;margin:4px 0;padding:9px;border-radius:8px;border:1px solid #2a3566;background:#0b1020;color:#fff;font:14px sans-serif}
 #fmsg{font-size:13px;color:#ffd21f;min-height:18px}
 html.ovm,html.ovm body{background:transparent!important;overflow:hidden}
-html.ovm .bar,html.ovm .hint,html.ovm #wrap,html.ovm .modal{display:none!important}
+html.ovm .bar,html.ovm .hint,html.ovm .bgs,html.ovm #wrap,html.ovm .modal{display:none!important}
 #ovroot{display:none;position:fixed;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;opacity:0;transition:opacity .4s}
 .b{font:600 14px 'Hind Siliguri',sans-serif;padding:8px 12px;border:0;border-radius:10px;margin:2px}
 .b.y{background:#ffd21f;color:#1a1a1a}.b.g{background:#2a3566;color:#fff}.b.r{background:#c0392b;color:#fff}
@@ -57,6 +56,21 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
 #astat,#alive{color:#ffd21f;font-size:14px;min-height:20px;margin:4px 0}
 .pvw{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:8px;background:repeating-conic-gradient(#3a3f55 0 25%,#2a2e42 0 50%) 0 0/24px 24px}
 #apv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+:root{
+--bg1:radial-gradient(circle at 20% 10%,#1a2a6c 0,#0a1038 45%,#050a24 100%);
+--bg2:linear-gradient(160deg,#0f5a2c 0,#08341a 55%,#031a0c 100%);
+--bg3:radial-gradient(circle at 50% 0,#8a1222 0,#2b040c 55%,#120106 100%);
+--bg4:linear-gradient(160deg,#4a1d8c 0,#220e4d 55%,#0d0522 100%);
+--bg5:radial-gradient(circle at 50% 0,#4a4128 0,#17140b 55%,#000 100%);
+--bg6:linear-gradient(160deg,#0a6a7c 0,#063a4a 55%,#021822 100%)}
+.bgs{display:none;justify-content:center;gap:10px;padding:8px;background:#0e1430}
+.bgs.on{display:flex}
+.sw{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.25);cursor:pointer;padding:0}
+.sw.on{border-color:#ffd21f}
+html.admm .bgs,html.ovm .bgs{display:none!important}
+#stage[data-bg="2"]{background:var(--bg2)}#stage[data-bg="3"]{background:var(--bg3)}#stage[data-bg="4"]{background:var(--bg4)}#stage[data-bg="5"]{background:var(--bg5)}#stage[data-bg="6"]{background:var(--bg6)}
+#stage>*{position:relative;z-index:1}
+#stage>#deco{position:absolute;left:0;top:0;width:100%;height:100%;z-index:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -64,6 +78,7 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
   <button onclick="addP()">+ খেলোয়াড়</button>
   <button class="g" onclick="delP()">− খেলোয়াড়</button>
   <button onclick="dl()">⬇ ছবি ডাউনলোড</button>
+  <button class="g" onclick="document.getElementById('bgs').classList.toggle('on')">🎨 ব্যাকগ্রাউন্ড</button>
   <button class="g" id="ovbtn" onclick="openOv()">🎬 Prism ওভারলে</button>
   <button id="savebtn" style="display:none" onclick="saveLocal()">💾 সেভ</button>
   <button id="newbtn" class="g" style="display:none" onclick="newTeam()">➕ আরেকটা টিম</button>
@@ -71,16 +86,24 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
   <button id="sendbtn" style="display:none;background:#2fb36b;color:#fff" onclick="sendAdmin()">📤 অ্যাডমিনকে পাঠান (Live)</button>
   <span id="smsg" style="font-size:13px;color:#ffd21f"></span>
 </div>
+<div class="bgs" id="bgs">
+  <button class="sw" data-b="1" style="background:var(--bg1)" onclick="setBg(1)"></button>
+  <button class="sw" data-b="2" style="background:var(--bg2)" onclick="setBg(2)"></button>
+  <button class="sw" data-b="3" style="background:var(--bg3)" onclick="setBg(3)"></button>
+  <button class="sw" data-b="4" style="background:var(--bg4)" onclick="setBg(4)"></button>
+  <button class="sw" data-b="5" style="background:var(--bg5)" onclick="setBg(5)"></button>
+  <button class="sw" data-b="6" style="background:var(--bg6)" onclick="setBg(6)"></button>
+</div>
 <div class="hint">যেকোনো লেখায় ট্যাপ করে বদলান • ছবির ঘরে ট্যাপ করে ফটো দিন</div>
-<div id="wrap"><div id="stage">
+<div id="wrap"><div id="stage" data-bg="1">
+  <svg id="deco" xmlns="http://www.w3.org/2000/svg"></svg>
   <div class="club" contenteditable="true">লোটন ফাইটার্স ক্লাবের</div>
   <div class="by" contenteditable="true">আয়োজনে</div>
   <div class="pill t1" contenteditable="true">নাইট ক্রিকেট টুর্নামেন্ট</div>
-  <div class="tag" contenteditable="true">মাঠ মাতাতে আসছে দল</div>
   <div class="pill t2" contenteditable="true">সান মুন একাদশ</div>
   <div class="mgr"><span contenteditable="true">টিম ম্যানেজার</span><b contenteditable="true">Sun</b></div>
   <div class="grid" id="grid"></div>
-  <div class="foot" contenteditable="true">সান মুন একাদশ</div>
+  <div class="foot">Crickets Update 24/7</div>
 </div></div>
 <div class="modal" id="modal"><div>
   <select id="omode" onchange="ovSel()"><option value="team">পুরো টিম (সব প্লেয়ার)</option><option value="one">একজন প্লেয়ার</option></select>
@@ -135,19 +158,48 @@ function addP(name){
   grid.appendChild(c);num();fit();
 }
 function delP(){if(grid.lastChild){grid.removeChild(grid.lastChild);fit()}}
+function compose(im){
+  const S=700,w=im.width,h=im.height,c=document.createElement('canvas');c.width=c.height=S;
+  const x=c.getContext('2d');x.imageSmoothingQuality='high';
+  if(h>w*1.05){
+    let t=document.createElement('canvas');t.width=t.height=24;
+    const k=Math.max(24/w,24/h);t.getContext('2d').drawImage(im,(24-w*k)/2,(24-h*k)/2,w*k,h*k);
+    const m=document.createElement('canvas');m.width=m.height=120;const mx=m.getContext('2d');mx.imageSmoothingQuality='high';mx.drawImage(t,0,0,120,120);
+    x.drawImage(m,0,0,S,S);x.fillStyle='rgba(0,0,0,.28)';x.fillRect(0,0,S,S);
+    const fw=S*w/h;x.drawImage(im,(S-fw)/2,0,fw,S);
+  }else{
+    const k=Math.max(S/w,S/h);x.drawImage(im,(S-w*k)/2,(S-h*k)/2,w*k,h*k);
+  }
+  return c.toDataURL('image/jpeg',.85);
+}
 function pick(inp){
   const f=inp.files&&inp.files[0];if(!f)return;
   const ph=inp.parentNode,url=URL.createObjectURL(f),im=new Image();
-  im.onload=()=>{
-    const m=700,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');
-    c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-    ph.style.backgroundImage='url('+c.toDataURL('image/jpeg',.85)+')';ph._src=c.toDataURL('image/jpeg',.85);
-    const lb=ph.querySelector('.lb');if(lb)lb.remove();
-    URL.revokeObjectURL(url);inp.value='';
-  };
+  im.onload=()=>{setPh(ph,compose(im));URL.revokeObjectURL(url);inp.value=''};
   im.onerror=()=>alert('ছবিটা লোড হয়নি, অন্য ছবি দিন');
   im.src=url;
 }
+function decor(n){
+  const ic='<pattern id="ic" width="320" height="320" patternUnits="userSpaceOnUse"><g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".11"><g transform="translate(70 80) rotate(35)"><rect x="-14" y="-6" width="28" height="92" rx="9"/><rect x="-5" y="-46" width="10" height="40" rx="4"/></g><g transform="translate(235 85)"><circle r="21"/><path d="M-15 -15Q0 0 -15 15M15 -15Q0 0 15 15"/></g><g transform="translate(245 245)"><path d="M-20 -32V32M0 -32V32M20 -32V32M-20 -38H-2M2 -38H20"/></g><g transform="translate(85 250) rotate(-38) scale(.8)"><rect x="-14" y="-6" width="28" height="92" rx="9"/><rect x="-5" y="-46" width="10" height="40" rx="4"/></g></g></pattern>';
+  const gr='<filter id="gr" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .35 0 0 0 0"/></filter>';
+  const T={
+    1:['<radialGradient id="g1"><stop offset="0" stop-color="#cfe3ff" stop-opacity=".35"/><stop offset="1" stop-color="#cfe3ff" stop-opacity="0"/></radialGradient><pattern id="th" width="140" height="140" patternUnits="userSpaceOnUse"><circle cx="20" cy="30" r="2" fill="#fff" opacity=".6"/><circle cx="90" cy="70" r="1.5" fill="#fff" opacity=".5"/><circle cx="120" cy="120" r="2" fill="#ffd21f" opacity=".5"/></pattern>',
+       '<circle cx="40" cy="0" r="560" fill="url(#g1)"/><circle cx="1040" cy="0" r="560" fill="url(#g1)"/><rect width="100%" height="100%" fill="url(#th)"/>'],
+    2:['<pattern id="th" width="200" height="10" patternUnits="userSpaceOnUse"><rect width="100" height="10" fill="#fff" opacity=".07"/></pattern>',
+       '<rect width="100%" height="100%" fill="url(#th)"/>'],
+    3:['<pattern id="th" width="70" height="70" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><rect width="30" height="70" fill="#ffb347" opacity=".06"/></pattern>',
+       '<rect width="100%" height="100%" fill="url(#th)"/>'],
+    4:['<pattern id="th" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="22" cy="22" r="2.4" fill="#fff" opacity=".14"/></pattern>',
+       '<rect width="100%" height="100%" fill="url(#th)"/>'],
+    5:['<pattern id="th" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M0 0L60 60M60 0L0 60" stroke="#ffd21f" stroke-width="1.5" opacity=".1"/></pattern>',
+       '<rect width="100%" height="100%" fill="url(#th)"/>'],
+    6:['<pattern id="th" width="120" height="44" patternUnits="userSpaceOnUse"><path d="M0 22Q30 0 60 22T120 22" fill="none" stroke="#fff" stroke-width="2" opacity=".1"/></pattern>',
+       '<rect width="100%" height="100%" fill="url(#th)"/>']
+  };
+  const t=T[n]||T[1];
+  return '<defs>'+ic+gr+t[0]+'</defs>'+t[1]+'<rect width="100%" height="100%" fill="url(#ic)"/><rect width="100%" height="100%" filter="url(#gr)" opacity=".22"/>';
+}
+function setBg(n){stage.dataset.bg=String(n);const d=document.getElementById('deco');if(d)d.innerHTML=decor(+n);document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.b==String(n)))}
 function fit(){
   const s=Math.min(1,(window.innerWidth-16)/1080);
   stage.style.transform='scale('+s+')';
@@ -181,20 +233,20 @@ function ovHtml(d,mode,k){
   if(mode==='one'){
     const p=ps[k]||{n:''};
     return '<div style="position:absolute;left:60px;bottom:60px;display:flex;border:6px solid #ffc933;border-radius:28px;background:#0a1038;padding:14px;gap:24px;'+ff+'">'
-     +'<div data-i="'+k+'" style="width:340px;height:420px;border-radius:16px;border:4px solid #ffc933;'+bg+'"></div>'
+     +'<div data-i="'+k+'" style="width:420px;height:420px;border-radius:16px;border:4px solid #ffc933;'+bg+'"></div>'
      +'<div style="display:flex;flex-direction:column;justify-content:center;min-width:560px;padding-right:30px;text-align:left">'
      +'<div style="color:#ffd21f;font-size:44px;font-weight:600">'+t+'</div>'
      +'<div style="color:#fff;font-size:110px;font-weight:700;line-height:1.25">'+p.n+'</div>'
      +'<div style="color:#d7ffb8;font-size:38px;font-weight:600">খেলোয়াড় নং '+(k+1)+'</div></div></div>';
   }
-  const n=ps.length||1,gap=14,rows=Math.ceil(n/6),ph0=Math.min(300,Math.floor((860-gap*(rows-1))/rows)-76),w=Math.min(290,Math.round(ph0*1.05)),ph=Math.round(w/1.05),fs=Math.min(36,Math.floor(w/6.2));
+  const n=ps.length||1,gap=14,rows=Math.ceil(n/6),ph0=Math.min(300,Math.floor((860-gap*(rows-1))/rows)-76),w=Math.min(290,ph0),ph=w,fs=Math.min(36,Math.floor(w/6.2));
   const cards=ps.map((p,i)=>'<div style="width:'+w+'px;border:4px solid #ffc933;border-radius:16px;padding:6px;background:#0a1038">'
     +'<div data-i="'+i+'" style="height:'+ph+'px;border-radius:8px;'+bg+'"></div>'
     +'<div style="margin-top:6px;background:#0b1670;border:3px solid #ffc933;border-radius:10px;color:#fff;font-size:'+fs+'px;font-weight:700;text-align:center;line-height:1.4;white-space:nowrap;overflow:hidden">'+(i+1)+'. '+p.n+'</div></div>').join('');
   return '<div style="position:absolute;left:40px;right:40px;bottom:50px;'+ff+'">'
    +'<div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-bottom:14px">'
-   +'<div style="background:#2a0508;border:6px solid #ffc933;border-radius:50px;color:#ffd21f;font-size:64px;font-weight:700;padding:0 50px;line-height:1.4">'+t+'</div>'
-   +'<div style="background:#a00016;border:5px solid #ffc933;border-radius:40px;color:#fff;font-size:38px;font-weight:600;padding:2px 30px">'+lab+' '+m+'</div></div>'
+   +'<div style="background:#a00016;border:6px solid #ffc933;border-radius:50px;color:#fff;font-size:64px;font-weight:700;padding:0 50px;line-height:1.4">'+t+'</div>'
+   +'<div style="background:#2a0508;border:5px solid #ffc933;border-radius:40px;color:#ffd21f;font-size:38px;font-weight:600;padding:2px 30px">'+lab+' '+m+'</div></div>'
    +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:'+gap+'px;width:'+(6*w+5*gap+2)+'px;margin:0 auto">'+cards+'</div></div>';
 }
 function paintImgs(el,d){el.querySelectorAll('[data-i]').forEach(x=>{const p=(d.ps||[])[+x.dataset.i];if(p&&p.i)x.style.backgroundImage='url("'+p.i+'")'})}
@@ -275,16 +327,16 @@ function idbDo(mode,fn){
     r.onsuccess=()=>{const tx=r.result.transaction('d',mode),rq=fn(tx.objectStore('d'));tx.oncomplete=()=>res(rq&&rq.result);tx.onerror=()=>rej(tx.error)};
   });
 }
-const SEL=['.club','.by','.t1','.tag','.t2','.foot'];
+const SEL=['.club','.by','.t1','.t2'];
 function snap(){
   const g=q=>stage.querySelector(q).textContent;
   const x={lab:g('.mgr span'),m:g('.mgr b'),ps:[...grid.children].map(c=>({n:c.querySelector('.v').textContent,i:c.querySelector('.ph')._src||''}))};
-  SEL.forEach(q=>x[q]=g(q));return x;
+  SEL.forEach(q=>x[q]=g(q));x.bg=stage.dataset.bg||'1';return x;
 }
 function setPh(ph,src){if(!src)return;ph.style.backgroundImage='url("'+src+'")';ph._src=src;const lb=ph.querySelector('.lb');if(lb)lb.remove()}
 function restore(x){
   const w=(q,v)=>{stage.querySelector(q).textContent=v};
-  SEL.forEach(q=>w(q,x[q]));w('.mgr span',x.lab);w('.mgr b',x.m);
+  SEL.forEach(q=>{if(x[q]!==undefined)w(q,x[q])});w('.mgr span',x.lab);w('.mgr b',x.m);setBg(x.bg||'1');
   grid.innerHTML='';x.ps.forEach(p=>{addP(p.n);setPh(grid.lastChild.querySelector('.ph'),p.i)});fit();
 }
 function blankPlayers(){grid.innerHTML='';for(let i=0;i<9;i++)addP('নাম');fit()}
@@ -302,7 +354,7 @@ async function gateOk(){
   try{localStorage.setItem('tpm_ident_'+Q.get('s'),JSON.stringify({n,t}))}catch(e){}
   let d=null;try{d=await idbDo('readonly',s=>s.get(mkId(n,t)))}catch(e){}
   if(d&&d.snap){restore(d.snap);smsg('📂 আগের সেভ করা টিম খোলা হয়েছে')}
-  else{stage.querySelector('.mgr b').textContent=n;stage.querySelector('.t2').textContent=t;stage.querySelector('.foot').textContent=t;smsg('')}
+  else{stage.querySelector('.mgr b').textContent=n;stage.querySelector('.t2').textContent=t;smsg('')}
   $('gate').classList.remove('on');
 }
 async function saveLocal(quiet){
@@ -316,7 +368,7 @@ async function newTeam(){
   if(x.m.trim()&&x['.t2'].trim())await saveLocal(true);
   blankPlayers();
   const w=(q,v)=>{stage.querySelector(q).textContent=v};
-  w('.mgr b','');w('.t2','');w('.foot','');
+  w('.mgr b','');w('.t2','');
   let id={};try{id=JSON.parse(localStorage.getItem('tpm_ident_'+Q.get('s'))||'{}')}catch(e){}
   openGate(id.n,'');smsg('');
 }
@@ -438,7 +490,7 @@ function dlOv(){
   a.download=one?'player-overlay.png':'team-overlay.png';a.click();
 }
 if(OVM)runOverlay();else if(Q.get('admin'))runAdmin();else{
-names.forEach(n=>addP(n));
+names.forEach(n=>addP(n));setBg(1);
 window.addEventListener('resize',fit);
 document.fonts&&document.fonts.ready.then(fit);
 if(Q.get('s'))setupManager();
