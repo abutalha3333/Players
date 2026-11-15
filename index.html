@@ -44,6 +44,19 @@ body{margin:0;background:#0b1020;font-family:'Hind Siliguri',sans-serif;color:#f
 html.ovm,html.ovm body{background:transparent!important;overflow:hidden}
 html.ovm .bar,html.ovm .hint,html.ovm #wrap,html.ovm .modal{display:none!important}
 #ovroot{display:none;position:fixed;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;opacity:0;transition:opacity .4s}
+.b{font:600 14px 'Hind Siliguri',sans-serif;padding:8px 12px;border:0;border-radius:10px;margin:2px}
+.b.y{background:#ffd21f;color:#1a1a1a}.b.g{background:#2a3566;color:#fff}.b.r{background:#c0392b;color:#fff}
+html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!important}
+.adm{max-width:1100px;margin:0 auto;padding:14px;font-family:'Hind Siliguri',sans-serif}
+.adm h2,.adm h3{margin:6px 0}
+.adm select{font:600 14px 'Hind Siliguri',sans-serif;padding:8px;border-radius:8px;border:0;margin:2px}
+.cols{display:flex;gap:14px;flex-wrap:wrap}.col{flex:1 1 380px;min-width:0}
+.tm{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;margin:6px 0;border:1px solid #2a3566;border-radius:10px;background:#111936}
+.tm.sel{border-color:#ffd21f}.tm.lv{background:#3a0d14}
+.tag{background:#e0243b;border-radius:6px;padding:0 6px;font-size:12px}
+#astat,#alive{color:#ffd21f;font-size:14px;min-height:20px;margin:4px 0}
+.pvw{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:8px;background:repeating-conic-gradient(#3a3f55 0 25%,#2a2e42 0 50%) 0 0/24px 24px}
+#apv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
 </style>
 </head>
 <body>
@@ -51,7 +64,9 @@ html.ovm .bar,html.ovm .hint,html.ovm #wrap,html.ovm .modal{display:none!importa
   <button onclick="addP()">+ খেলোয়াড়</button>
   <button class="g" onclick="delP()">− খেলোয়াড়</button>
   <button onclick="dl()">⬇ ছবি ডাউনলোড</button>
-  <button class="g" onclick="openOv()">🎬 Prism ওভারলে</button>
+  <button class="g" id="ovbtn" onclick="openOv()">🎬 Prism ওভারলে</button>
+  <button id="sendbtn" style="display:none;background:#2fb36b;color:#fff" onclick="sendAdmin()">📤 অ্যাডমিনকে পাঠান (Live)</button>
+  <span id="smsg" style="font-size:13px;color:#ffd21f"></span>
 </div>
 <div class="hint">যেকোনো লেখায় ট্যাপ করে বদলান • ছবির ঘরে ট্যাপ করে ফটো দিন</div>
 <div id="wrap"><div id="stage">
@@ -82,9 +97,16 @@ html.ovm .bar,html.ovm .hint,html.ovm #wrap,html.ovm .modal{display:none!importa
     <input id="flink" readonly placeholder="ওভারলে লিংক এখানে আসবে">
     <div id="fmsg"></div>
   </div>
+  <div class="live">
+    <b style="font-size:15px">👥 টিম ম্যানেজার সিস্টেম</b>
+    <div class="hint">ম্যানেজাররা টিম লিংকে পোস্টার বানিয়ে আপনার প্যানেলে পাঠাবে</div>
+    <button style="background:#ffd21f" onclick="openAdmin()">👑 অ্যাডমিন প্যানেল</button>
+    <button style="background:#2a3566;color:#fff" onclick="copyTeamLink()">📤 টিম লিংক কপি</button>
+  </div>
   <div class="chk"><img id="oimg"></div>
 </div></div>
 <div id="ovroot"></div>
+<div id="adm"></div>
 <script>
 const grid=document.getElementById('grid'),stage=document.getElementById('stage'),wrap=document.getElementById('wrap');
 const names=['Sun','Moon','Sujon','Manik','Kamrul','Riyaz','Rubel','Chan','Noman'];
@@ -178,7 +200,7 @@ const msg=x=>{$('fmsg').textContent=x};
 function fput(path,obj){
   const u=dbu();
   if(!/^https:\/\//.test(u)||!rm()){msg('Firebase URL ও Room ID দিন');return Promise.reject(new Error('cfg'))}
-  try{localStorage.setItem('tpm',JSON.stringify({db:u,room:rm()}))}catch(e){}
+  saveCfg();
   return fetch(u+'/overlays/'+rm()+'/'+path+'.json',{method:'PUT',body:JSON.stringify(obj)}).then(r=>{if(!r.ok)throw new Error(r.status)});
 }
 function pushCtl(){ctl.mode=$('omode').value;ctl.idx=+$('oplayer').value||0;return fput('ctl',ctl)}
@@ -199,9 +221,116 @@ function copyLink(){
   try{navigator.clipboard.writeText(l)}catch(e){$('flink').select()}
   msg(location.protocol==='file:'?'⚠ লিংক কাজ করতে ফাইলটা GitHub Pages-এ আপলোড করে সেখান থেকে লিংক নিন':'✔ লিংক কপি হয়েছে — Prism-এ Web/Browser source-এ দিন');
 }
+let SUBV='';
+const base0=()=>location.href.split('#')[0].split('?')[0];
+function saveCfg(){try{localStorage.setItem('tpm',JSON.stringify({db:dbu(),room:rm(),sub:SUBV}))}catch(e){}}
 function loadSaved(){
-  try{const x=JSON.parse(localStorage.getItem('tpm')||'{}');if(x.db&&!$('fdb').value)$('fdb').value=x.db;if(x.room&&!$('froom').value)$('froom').value=x.room}catch(e){}
-  if(!$('froom').value)$('froom').value='team-'+Math.random().toString(36).slice(2,8);
+  try{const x=JSON.parse(localStorage.getItem('tpm')||'{}');if(x.db&&!$('fdb').value)$('fdb').value=x.db;if(x.room&&!$('froom').value)$('froom').value=x.room;if(x.sub)SUBV=x.sub}catch(e){}
+  if(!$('froom').value)$('froom').value='team-'+Math.random().toString(36).slice(2,10);
+  if(!SUBV)SUBV='sub-'+Math.random().toString(36).slice(2,10);
+}
+function cfgOK(){if(!/^https:\/\//.test(dbu())||!rm()){msg('Firebase URL ও Room ID দিন');return false}if(!SUBV)loadSaved();saveCfg();return true}
+function openAdmin(){if(!cfgOK())return;window.open(base0()+'?admin='+rm()+'&sub='+SUBV+'&db='+encodeURIComponent(dbu()),'_blank')}
+function copyTeamLink(){
+  if(!cfgOK())return;
+  const l=base0()+'?s='+SUBV+'&db='+encodeURIComponent(dbu());
+  $('flink').value=l;
+  try{navigator.clipboard.writeText(l)}catch(e){$('flink').select()}
+  msg(location.protocol==='file:'?'⚠ ফাইলটা GitHub Pages-এ আপলোড করে সেখান থেকে লিংক নিন':'✔ টিম লিংক কপি হয়েছে — ম্যানেজারদের পাঠান');
+}
+/* ---------- shared Firebase REST ---------- */
+const DB=(Q.get('db')||'').replace(/\/+$/,'');
+function api(id,path,method,body){
+  return fetch(DB+'/overlays/'+encodeURIComponent(id)+'/'+path+'.json',{method:method||'GET',body:body===undefined?undefined:JSON.stringify(body),cache:'no-store'})
+    .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
+}
+/* ---------- Team manager mode (?s=) ---------- */
+function setupManager(){
+  $('sendbtn').style.display='';$('ovbtn').style.display='none';
+  document.querySelector('.hint').textContent='পোস্টার বানান → ⬇ ডাউনলোড করুন → 📤 অ্যাডমিনকে পাঠান';
+}
+async function sendAdmin(){
+  const S=Q.get('s'),sm=x=>{$('smsg').textContent=x};
+  if(!S||!DB){sm('❌ লিংক ঠিক নেই');return}
+  const d=getData();
+  if(!d.t){sm('❌ টিমের নাম লিখুন');return}
+  let id='';try{id=localStorage.getItem('tpm_tid_'+S)||''}catch(e){}
+  if(!id){id='t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);try{localStorage.setItem('tpm_tid_'+S,id)}catch(e){}}
+  d.ts=Date.now();sm('পাঠানো হচ্ছে…');
+  try{
+    await api(S,'teams/'+id,'PUT',d);
+    await api(S,'index/'+id,'PUT',{t:d.t,m:d.m,n:d.ps.length,ts:d.ts});
+    sm('✔ অ্যাডমিনের কাছে পাঠানো হয়েছে');
+  }catch(e){sm('❌ পাঠানো যায়নি, আবার চেষ্টা করুন')}
+}
+/* ---------- Admin panel (?admin=) ---------- */
+function runAdmin(){
+  document.documentElement.classList.add('admm');
+  const ROOM=Q.get('admin'),SUB=Q.get('sub')||'',root=$('adm');
+  if(!DB||!ROOM||!SUB){root.textContent='লিংক ঠিক নেই';return}
+  root.innerHTML='<div class="adm"><h2>👑 অ্যাডমিন প্যানেল</h2>'
+   +'<div><button class="b y" id="acpo">🔗 Prism ওভারলে লিংক</button><button class="b g" id="acps">📤 টিম লিংক (ম্যানেজারদের)</button></div><div id="astat"></div>'
+   +'<div class="cols"><div class="col"><h3>পাঠানো টিম</h3><div id="alist">কোনো টিম আসেনি…</div></div>'
+   +'<div class="col"><h3>প্রিভিউ ও লাইভ</h3><div><select id="amode"><option value="team">পুরো টিম</option><option value="one">একজন প্লেয়ার</option></select><select id="aplayer" style="display:none"></select></div>'
+   +'<div style="margin:6px 0"><button class="b y" id="alivebtn">▶ লাইভে দেখান</button><button class="b r" id="ahide">⏹ লুকান</button></div><div id="alive"></div>'
+   +'<div class="pvw" id="pvw"><div id="apv"></div></div></div></div></div>';
+  let sel='',seld=null,liveId='',idx={},last='',ctl={show:false,mode:'team',idx:0,dv:0};
+  const st=x=>{$('astat').textContent=x},mode=()=>$('amode').value,kk=()=>+$('aplayer').value||0;
+  const sc=()=>{$('apv').style.transform='scale('+($('pvw').clientWidth/1920)+')'};
+  addEventListener('resize',sc);
+  function prev(){const v=$('apv');if(!seld){v.innerHTML='';return}v.innerHTML=ovHtml(seld,mode(),kk());paintImgs(v,seld);sc()}
+  function drawList(){
+    const ids=Object.keys(idx).sort((a,b)=>(idx[b].ts||0)-(idx[a].ts||0));
+    $('alist').innerHTML=ids.length?ids.map(id=>{const x=idx[id];
+      return '<div class="tm'+(id===sel?' sel':'')+(id===liveId?' lv':'')+'"><div><b>'+esc(x.t||'(নামহীন)')+'</b>'+(id===liveId?' <span class="tag">LIVE</span>':'')
+      +'<br><small>'+esc(x.m||'')+' • '+(x.n||0)+' জন • '+new Date(x.ts||0).toLocaleTimeString()+'</small></div>'
+      +'<div><button class="b g" data-a="p" data-id="'+id+'">👁</button><button class="b y" data-a="l" data-id="'+id+'">▶</button><button class="b r" data-a="d" data-id="'+id+'">🗑</button></div></div>'}).join(''):'কোনো টিম আসেনি…';
+  }
+  async function load(id){
+    st('লোড হচ্ছে…');
+    try{
+      seld=await api(SUB,'teams/'+id);sel=id;
+      $('aplayer').innerHTML=(seld.ps||[]).map((p,i)=>'<option value="'+i+'">'+(i+1)+'. '+esc(p.n)+'</option>').join('');
+      prev();st('');drawList();
+    }catch(e){st('❌ টিম লোড হয়নি')}
+  }
+  async function goLive(id){
+    if(sel!==id||!seld)await load(id);
+    if(!seld)return;
+    try{
+      await api(ROOM,'data','PUT',seld);
+      ctl={show:true,mode:mode(),idx:kk(),dv:Date.now()};
+      await api(ROOM,'ctl','PUT',ctl);
+      liveId=id;$('alive').textContent='🔴 লাইভ: '+seld.t;drawList();
+    }catch(e){st('❌ লাইভে পাঠানো যায়নি — rules চেক করুন')}
+  }
+  function pushC(){if(!liveId)return;ctl.mode=mode();ctl.idx=kk();api(ROOM,'ctl','PUT',ctl).catch(()=>{})}
+  async function poll(){
+    try{const r=(await api(SUB,'index'))||{};const k=JSON.stringify(r);if(k!==last){last=k;idx=r;drawList()}}
+    catch(e){st('❌ ডাটাবেস কানেক্ট হয়নি — URL/rules চেক করুন')}
+  }
+  $('alist').onclick=async e=>{
+    const b=e.target.closest('button');if(!b)return;const id=b.dataset.id,a=b.dataset.a;
+    if(a==='p')load(id);
+    else if(a==='l')goLive(id);
+    else if(a==='d'&&confirm('এই টিম মুছবেন?')){
+      try{await api(SUB,'index/'+id,'DELETE');await api(SUB,'teams/'+id,'DELETE')}catch(x){}
+      if(sel===id){sel='';seld=null;prev()}
+      last='';poll();
+    }
+  };
+  $('amode').onchange=()=>{$('aplayer').style.display=mode()==='one'?'':'none';prev();pushC()};
+  $('aplayer').onchange=()=>{prev();pushC()};
+  $('alivebtn').onclick=()=>{if(sel)goLive(sel);else st('আগে একটা টিম বাছুন (▶ বা 👁)')};
+  $('ahide').onclick=async()=>{
+    ctl.show=false;
+    try{await api(ROOM,'ctl','PUT',ctl);liveId='';$('alive').textContent='⏹ ওভারলে লুকানো আছে';drawList()}catch(e){st('❌ ব্যর্থ')}
+  };
+  const cp=(t,m)=>{const ok=()=>st(m);navigator.clipboard?navigator.clipboard.writeText(t).then(ok,()=>prompt('কপি করুন',t)):prompt('কপি করুন',t)};
+  const enc=encodeURIComponent(DB);
+  $('acpo').onclick=()=>cp(base0()+'?o='+ROOM+'&db='+enc,'✔ Prism ওভারলে লিংক কপি হয়েছে');
+  $('acps').onclick=()=>cp(base0()+'?s='+SUB+'&db='+enc,'✔ টিম লিংক কপি হয়েছে');
+  sc();poll();setInterval(poll,3000);
 }
 /* ---------- Overlay (Prism) mode ---------- */
 function runOverlay(){
@@ -228,10 +357,11 @@ function dlOv(){
   const one=document.getElementById('omode').value==='one';
   a.download=one?'player-overlay.png':'team-overlay.png';a.click();
 }
-if(OVM)runOverlay();else{
+if(OVM)runOverlay();else if(Q.get('admin'))runAdmin();else{
 names.forEach(n=>addP(n));
 window.addEventListener('resize',fit);
 document.fonts&&document.fonts.ready.then(fit);
+if(Q.get('s'))setupManager();
 }
 </script>
 </body>
