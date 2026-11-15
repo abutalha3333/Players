@@ -149,7 +149,7 @@ function ovHtml(d,mode,k){
      +'<div style="color:#fff;font-size:110px;font-weight:700;line-height:1.25">'+p.n+'</div>'
      +'<div style="color:#d7ffb8;font-size:38px;font-weight:600">খেলোয়াড় নং '+(k+1)+'</div></div></div>';
   }
-  const n=ps.length||1,gap=14,rows=Math.ceil(n/4),ph=Math.min(300,Math.floor((860-gap*(rows-1))/rows)-76),w=Math.round(ph*1.05),fs=Math.min(36,Math.floor(w/6.2));
+  const n=ps.length||1,gap=14,rows=Math.ceil(n/6),ph0=Math.min(300,Math.floor((860-gap*(rows-1))/rows)-76),w=Math.min(290,Math.round(ph0*1.05)),ph=Math.round(w/1.05),fs=Math.min(36,Math.floor(w/6.2));
   const cards=ps.map((p,i)=>'<div style="width:'+w+'px;border:4px solid #ffc933;border-radius:16px;padding:6px;background:#0a1038">'
     +'<div data-i="'+i+'" style="height:'+ph+'px;border-radius:8px;'+bg+'"></div>'
     +'<div style="margin-top:6px;background:#0b1670;border:3px solid #ffc933;border-radius:10px;color:#fff;font-size:'+fs+'px;font-weight:700;text-align:center;line-height:1.4;white-space:nowrap;overflow:hidden">'+(i+1)+'. '+p.n+'</div></div>').join('');
@@ -157,7 +157,7 @@ function ovHtml(d,mode,k){
    +'<div style="display:flex;justify-content:center;align-items:center;gap:20px;margin-bottom:14px">'
    +'<div style="background:#2a0508;border:6px solid #ffc933;border-radius:50px;color:#ffd21f;font-size:64px;font-weight:700;padding:0 50px;line-height:1.4">'+t+'</div>'
    +'<div style="background:#a00016;border:5px solid #ffc933;border-radius:40px;color:#fff;font-size:38px;font-weight:600;padding:2px 30px">'+lab+' '+m+'</div></div>'
-   +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:'+gap+'px;width:'+(4*w+3*gap+2)+'px;margin:0 auto">'+cards+'</div></div>';
+   +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:'+gap+'px;width:'+(6*w+5*gap+2)+'px;margin:0 auto">'+cards+'</div></div>';
 }
 function paintImgs(el,d){el.querySelectorAll('[data-i]').forEach(x=>{const p=(d.ps||[])[+x.dataset.i];if(p&&p.i)x.style.backgroundImage='url("'+p.i+'")'})}
 function mkOv(){
