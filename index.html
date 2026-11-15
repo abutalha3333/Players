@@ -53,7 +53,7 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
 .cols{display:flex;gap:14px;flex-wrap:wrap}.col{flex:1 1 380px;min-width:0}
 .tm{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 10px;margin:6px 0;border:1px solid #2a3566;border-radius:10px;background:#111936}
 .tm.sel{border-color:#ffd21f}.tm.lv{background:#3a0d14}
-.tag{background:#e0243b;border-radius:6px;padding:0 6px;font-size:12px}
+.lvtag{background:#e0243b;border-radius:6px;padding:0 6px;font-size:12px}
 #astat,#alive{color:#ffd21f;font-size:14px;min-height:20px;margin:4px 0}
 .pvw{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:8px;background:repeating-conic-gradient(#3a3f55 0 25%,#2a2e42 0 50%) 0 0/24px 24px}
 #apv{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
@@ -65,6 +65,9 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
   <button class="g" onclick="delP()">− খেলোয়াড়</button>
   <button onclick="dl()">⬇ ছবি ডাউনলোড</button>
   <button class="g" id="ovbtn" onclick="openOv()">🎬 Prism ওভারলে</button>
+  <button id="savebtn" style="display:none" onclick="saveLocal()">💾 সেভ</button>
+  <button id="newbtn" class="g" style="display:none" onclick="newTeam()">➕ আরেকটা টিম</button>
+  <button id="mybtn" class="g" style="display:none" onclick="openMy()">📁 আমার টিম</button>
   <button id="sendbtn" style="display:none;background:#2fb36b;color:#fff" onclick="sendAdmin()">📤 অ্যাডমিনকে পাঠান (Live)</button>
   <span id="smsg" style="font-size:13px;color:#ffd21f"></span>
 </div>
@@ -104,6 +107,19 @@ html.admm .bar,html.admm .hint,html.admm #wrap,html.admm .modal{display:none!imp
     <button style="background:#2a3566;color:#fff" onclick="copyTeamLink()">📤 টিম লিংক কপি</button>
   </div>
   <div class="chk"><img id="oimg"></div>
+</div></div>
+<div class="modal" id="gate"><div class="live" style="margin-top:12vh">
+  <b style="font-size:18px">স্বাগতম! 👋</b>
+  <div class="hint">শুরু করার আগে আপনার ও দলের নাম দিন</div>
+  <input id="gname" placeholder="আপনার নাম (ম্যানেজার)">
+  <input id="gteam" placeholder="দলের নাম">
+  <button style="background:#ffd21f" onclick="gateOk()">শুরু করুন</button>
+  <div id="gmsg" style="color:#ffd21f;font-size:13px"></div>
+</div></div>
+<div class="modal" id="mylist"><div class="live">
+  <b style="font-size:16px">📁 আমার সেভ করা টিম</b>
+  <div id="mybody" style="text-align:left"></div>
+  <button style="background:#2a3566;color:#fff" onclick="document.getElementById('mylist').classList.remove('on')">বন্ধ</button>
 </div></div>
 <div id="ovroot"></div>
 <div id="adm"></div>
@@ -245,23 +261,87 @@ function api(id,path,method,body){
     .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
 }
 /* ---------- Team manager mode (?s=) ---------- */
-function setupManager(){
-  $('sendbtn').style.display='';$('ovbtn').style.display='none';
-  document.querySelector('.hint').textContent='পোস্টার বানান → ⬇ ডাউনলোড করুন → 📤 অ্যাডমিনকে পাঠান';
+const smsg=x=>{$('smsg').textContent=x};
+const norm=x=>x.trim().replace(/\s+/g,' ').toLowerCase();
+function h53(str){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0,c;i<str.length;i++){c=str.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return 4294967296*(2097151&h2)+(h1>>>0)}
+const mkId=(n,t)=>'t'+h53(norm(n)+'|'+norm(t)).toString(36);
+function idbDo(mode,fn){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('tpm_'+Q.get('s'),1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('d',{keyPath:'id'});
+    r.onerror=()=>rej(r.error);
+    r.onsuccess=()=>{const tx=r.result.transaction('d',mode),rq=fn(tx.objectStore('d'));tx.oncomplete=()=>res(rq&&rq.result);tx.onerror=()=>rej(tx.error)};
+  });
 }
+const SEL=['.club','.by','.t1','.tag','.t2','.foot'];
+function snap(){
+  const g=q=>stage.querySelector(q).textContent;
+  const x={lab:g('.mgr span'),m:g('.mgr b'),ps:[...grid.children].map(c=>({n:c.querySelector('.v').textContent,i:c.querySelector('.ph')._src||''}))};
+  SEL.forEach(q=>x[q]=g(q));return x;
+}
+function setPh(ph,src){if(!src)return;ph.style.backgroundImage='url("'+src+'")';ph._src=src;const lb=ph.querySelector('.lb');if(lb)lb.remove()}
+function restore(x){
+  const w=(q,v)=>{stage.querySelector(q).textContent=v};
+  SEL.forEach(q=>w(q,x[q]));w('.mgr span',x.lab);w('.mgr b',x.m);
+  grid.innerHTML='';x.ps.forEach(p=>{addP(p.n);setPh(grid.lastChild.querySelector('.ph'),p.i)});fit();
+}
+function blankPlayers(){grid.innerHTML='';for(let i=0;i<9;i++)addP('নাম');fit()}
+function openGate(n,t){$('gname').value=n||'';$('gteam').value=t||'';$('gmsg').textContent='';$('gate').classList.add('on')}
+function setupManager(){
+  ['savebtn','newbtn','mybtn','sendbtn'].forEach(i=>$(i).style.display='');$('ovbtn').style.display='none';
+  document.querySelector('.hint').textContent='পোস্টার বানান → 💾 সেভ → ⬇ ডাউনলোড → 📤 অ্যাডমিনকে পাঠান';
+  blankPlayers();
+  let id={};try{id=JSON.parse(localStorage.getItem('tpm_ident_'+Q.get('s'))||'{}')}catch(e){}
+  openGate(id.n,id.t);
+}
+async function gateOk(){
+  const n=$('gname').value.trim(),t=$('gteam').value.trim();
+  if(!n||!t){$('gmsg').textContent='❌ আপনার নাম ও দলের নাম দুটোই দিন';return}
+  try{localStorage.setItem('tpm_ident_'+Q.get('s'),JSON.stringify({n,t}))}catch(e){}
+  let d=null;try{d=await idbDo('readonly',s=>s.get(mkId(n,t)))}catch(e){}
+  if(d&&d.snap){restore(d.snap);smsg('📂 আগের সেভ করা টিম খোলা হয়েছে')}
+  else{stage.querySelector('.mgr b').textContent=n;stage.querySelector('.t2').textContent=t;stage.querySelector('.foot').textContent=t;smsg('')}
+  $('gate').classList.remove('on');
+}
+async function saveLocal(quiet){
+  const x=snap(),n=x.m.trim(),t=x['.t2'].trim();
+  if(!n||!t){smsg('❌ ম্যানেজারের নাম ও দলের নাম লিখুন');return false}
+  try{await idbDo('readwrite',s=>s.put({id:mkId(n,t),n,t,ts:Date.now(),snap:x}));if(quiet!==true)smsg('✔ সেভ হয়েছে');return true}
+  catch(e){smsg('❌ সেভ হয়নি (ব্রাউজার স্টোরেজ)');return false}
+}
+async function newTeam(){
+  const x=snap();
+  if(x.m.trim()&&x['.t2'].trim())await saveLocal(true);
+  blankPlayers();
+  const w=(q,v)=>{stage.querySelector(q).textContent=v};
+  w('.mgr b','');w('.t2','');w('.foot','');
+  let id={};try{id=JSON.parse(localStorage.getItem('tpm_ident_'+Q.get('s'))||'{}')}catch(e){}
+  openGate(id.n,'');smsg('');
+}
+async function openMy(){
+  let all=[];try{all=(await idbDo('readonly',s=>s.getAll()))||[]}catch(e){}
+  all.sort((a,b)=>b.ts-a.ts);window._my=all;
+  $('mybody').innerHTML=all.length?all.map((x,i)=>'<div class="tm"><div><b>'+esc(x.t)+'</b><br><small>'+esc(x.n)+' • '+new Date(x.ts).toLocaleString()+'</small></div>'
+    +'<div><button class="b y" onclick="myOpen('+i+')">খুলুন</button><button class="b r" onclick="myDel('+i+')">🗑</button></div></div>').join(''):'<div class="hint">এখনো কিছু সেভ করা নেই</div>';
+  $('mylist').classList.add('on');
+}
+function myOpen(i){const x=window._my[i];if(!x)return;restore(x.snap);$('mylist').classList.remove('on');smsg('📂 খোলা হয়েছে')}
+async function myDel(i){const x=window._my[i];if(!x||!confirm('এই সেভ করা টিম মুছবেন?'))return;try{await idbDo('readwrite',s=>s.delete(x.id))}catch(e){}openMy()}
 async function sendAdmin(){
-  const S=Q.get('s'),sm=x=>{$('smsg').textContent=x};
-  if(!S||!DB){sm('❌ লিংক ঠিক নেই');return}
-  const d=getData();
-  if(!d.t){sm('❌ টিমের নাম লিখুন');return}
-  let id='';try{id=localStorage.getItem('tpm_tid_'+S)||''}catch(e){}
-  if(!id){id='t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);try{localStorage.setItem('tpm_tid_'+S,id)}catch(e){}}
-  d.ts=Date.now();sm('পাঠানো হচ্ছে…');
+  const S=Q.get('s');
+  if(!S||!DB){smsg('❌ লিংক ঠিক নেই');return}
+  const d=getData(),n=d.m.trim(),t=d.t.trim();
+  if(!n||!t){smsg('❌ ম্যানেজারের নাম ও দলের নাম লিখুন');return}
+  const id=mkId(n,t);d.ts=Date.now();smsg('পাঠানো হচ্ছে…');
   try{
+    const ex=await api(S,'index/'+id);
     await api(S,'teams/'+id,'PUT',d);
-    await api(S,'index/'+id,'PUT',{t:d.t,m:d.m,n:d.ps.length,ts:d.ts});
-    sm('✔ অ্যাডমিনের কাছে পাঠানো হয়েছে');
-  }catch(e){sm('❌ পাঠানো যায়নি, আবার চেষ্টা করুন')}
+    await api(S,'index/'+id,'PUT',{t,m:n,n:d.ps.length,ts:d.ts});
+    await saveLocal(true);
+    smsg(ex?'✔ আগের ডাটা আপডেট হয়েছে':'✔ নতুন টিম অ্যাডমিনের কাছে পাঠানো হয়েছে');
+  }catch(e){smsg('❌ পাঠানো যায়নি, আবার চেষ্টা করুন')}
 }
 /* ---------- Admin panel (?admin=) ---------- */
 function runAdmin(){
@@ -282,7 +362,7 @@ function runAdmin(){
   function drawList(){
     const ids=Object.keys(idx).sort((a,b)=>(idx[b].ts||0)-(idx[a].ts||0));
     $('alist').innerHTML=ids.length?ids.map(id=>{const x=idx[id];
-      return '<div class="tm'+(id===sel?' sel':'')+(id===liveId?' lv':'')+'"><div><b>'+esc(x.t||'(নামহীন)')+'</b>'+(id===liveId?' <span class="tag">LIVE</span>':'')
+      return '<div class="tm'+(id===sel?' sel':'')+(id===liveId?' lv':'')+'"><div><b>'+esc(x.t||'(নামহীন)')+'</b>'+(id===liveId?' <span class="lvtag">LIVE</span>':'')
       +'<br><small>'+esc(x.m||'')+' • '+(x.n||0)+' জন • '+new Date(x.ts||0).toLocaleTimeString()+'</small></div>'
       +'<div><button class="b g" data-a="p" data-id="'+id+'">👁</button><button class="b y" data-a="l" data-id="'+id+'">▶</button><button class="b r" data-a="d" data-id="'+id+'">🗑</button></div></div>'}).join(''):'কোনো টিম আসেনি…';
   }
